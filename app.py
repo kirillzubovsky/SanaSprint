@@ -32,7 +32,7 @@ current_model_on_device = None # Track which model is on the GPU
 MAX_SEED = np.iinfo(np.int32).max
 MAX_IMAGE_SIZE = 1024
 
-def infer(prompt, model_size, seed=42, randomize_seed=False, width=1024, height=1024, guidance_scale=4.5, num_inference_steps=2):
+def infer(prompt, model_size, seed=42, randomize_seed=False, width=1024, height=1024, guidance_scale=4.5):
     global pipe, pipe2, current_model_on_device # Access global variables
 
     if randomize_seed:
@@ -86,7 +86,7 @@ def infer(prompt, model_size, seed=42, randomize_seed=False, width=1024, height=
     img = selected_pipe(
             prompt=prompt,
             guidance_scale=guidance_scale,
-            num_inference_steps=num_inference_steps,
+            num_inference_steps=2,
             width=width,
             height=height,
             generator=generator,
@@ -178,14 +178,6 @@ with gr.Blocks(css=css) as demo:
                     step=0.1,
                     value=4.5,
                 )
-  
-                num_inference_steps = gr.Slider(
-                    label="Number of inference steps",
-                    minimum=1,
-                    maximum=50,
-                    step=1,
-                    value=2,
-                )
         
         gr.Examples(
             examples = examples,
@@ -198,7 +190,7 @@ with gr.Blocks(css=css) as demo:
     gr.on(
         triggers=[run_button.click, prompt.submit],
         fn = infer,
-        inputs = [prompt, model_size, seed, randomize_seed, width, height, guidance_scale, num_inference_steps],  # Add model_size to inputs
+        inputs = [prompt, model_size, seed, randomize_seed, width, height, guidance_scale],
         outputs = [result, seed]
     )
 
